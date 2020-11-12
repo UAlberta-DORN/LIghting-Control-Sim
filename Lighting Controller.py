@@ -594,7 +594,7 @@ class Root(Tk):
     def partial_measure_light(self, fraction, sunlight):
         window_light = WINDOW_AREA * (1 - self.h * cos(self.theta)) * sunlight
         for i in range(self.num_sensors):
-            if not self.sensor_battery:
+            if not self.sensor_battery[i]:
                 dst = self.sensor_x[i] ** 2 + (self.sensor_y[i] - 2.5) ** 2
                 lux = random.normal(window_light, 0.01) / dst
                 for j in range(self.num_light_source):
