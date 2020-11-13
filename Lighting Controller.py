@@ -90,7 +90,7 @@ class Root(Tk):
         self.height_step_size = StringVar()
         self.height_step_size.set(0.05)
         self.tilt_step_size = StringVar()
-        self.tilt_step_size.set(0.05)
+        self.tilt_step_size.set(0.5)
         self.sample_period = StringVar()
         self.sample_period.set(60)
         self.err_thresh = StringVar()
@@ -538,7 +538,7 @@ class Root(Tk):
         sunset = float(self.sunset.get())
 
         self.h = 0
-        self.theta = pi / 4
+        self.theta = pi / 180
 
         self.time = []
         self.outside_light = []
@@ -609,8 +609,8 @@ class Root(Tk):
     def control(self):
         if self.num_sensors == 0:
             return
-        window = clip(self.measured_light[0] / self.max_lux, 0, 1)
-        room = clip(mean(self.measured_light[1:]) / self.max_lux, 0, 1)
+        window = self.measured_light[0] / self.max_lux
+        room = max(mean(self.measured_light[1:]) / self.max_lux, 0)
         self.err = self.ref - room
         dh = -self.alpha_h * self.err * window * cos(self.theta)
         dtheta = self.alpha_theta * self.err * window * self.h * sin(self.theta)
