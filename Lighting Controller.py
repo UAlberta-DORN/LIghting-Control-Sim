@@ -9,6 +9,8 @@ from matplotlib.backends.backend_tkagg import (
 from matplotlib.font_manager import FontProperties
 fontP = FontProperties()
 fontP.set_size('small')
+import seaborn as sns
+sns.set()
 
 
 WINDOW_WIDTH = 1.143  # m
@@ -101,6 +103,8 @@ class Root(Tk):
         self.use_response.set(False)
         self.refs = StringVar()
         self.refs.set('25,50,25')
+        self.use_window = BooleanVar()
+        self.use_window.set(True)
 
         self.initialize_layout()
         self.initialize_sim_parameters()
@@ -320,6 +324,13 @@ class Root(Tk):
         self.ref_entry.grid(column=1,
                             row=6)
 
+        self.use_window_checkbutton = Checkbutton(self.control_frame,
+                                                  text='Use Window Sensor',
+                                                  variable=self.use_window)
+        self.use_window_checkbutton.grid(column=0,
+                                         columnspan=2,
+                                         row=8)
+
 
     def initialize_sensor_frame(self):
         self.sensor_frame = LabelFrame(self,
@@ -537,7 +548,7 @@ class Root(Tk):
         light_pollution = float(self.light_pollution.get())
         sunset = float(self.sunset.get())
 
-        self.h = 0
+        self.h = 0.25
         self.theta = pi / 180
 
         self.time = []
@@ -609,11 +620,17 @@ class Root(Tk):
     def control(self):
         if self.num_sensors == 0:
             return
-        window = self.measured_light[0] / self.max_lux
         room = max(mean(self.measured_light[1:]) / self.max_lux, 0)
         self.err = self.ref - room
-        dh = -self.alpha_h * self.err * window * cos(self.theta)
-        dtheta = self.alpha_theta * self.err * window * self.h * sin(self.theta)
+
+        if self.use_window.get():
+            window = self.measured_light[0] / self.max_lux
+            dh = -self.alpha_h * self.err * window * cos(self.theta)
+            dtheta = self.alpha_theta * self.err * window * self.h * sin(self.theta)
+        else:
+            dh = self.alpha_h * self.err * -cos(self.theta)
+            dtheta = self.alpha_theta * self.err * self.h * sin(self.theta)
+
         self.h = clip(self.h + dh, 0, 1)
         self.theta = clip(self.theta + dtheta, pi / 180, pi / 2)
 
