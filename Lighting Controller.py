@@ -589,7 +589,7 @@ class Root(Tk):
 
     def measure_light(self, fraction, sunlight):
         self.measured_light[0] = random.normal(sunlight, 0.01)
-        window_light = WINDOW_AREA * (1 - self.h * cos(self.theta)) * sunlight
+        window_light = 2 * WINDOW_AREA * (1 - self.h * cos(self.theta)) * sunlight
         for i in range(self.num_sensors):
             dst = self.sensor_x[i] ** 2 + (self.sensor_y[i] - 2.5) ** 2
             lux = random.normal(window_light, 0.01) / dst
@@ -603,7 +603,7 @@ class Root(Tk):
             self.measured_light[i + 1] = lux
 
     def partial_measure_light(self, fraction, sunlight):
-        window_light = WINDOW_AREA * (1 - self.h * cos(self.theta)) * sunlight
+        window_light = 2 * WINDOW_AREA * (1 - self.h * cos(self.theta)) * sunlight
         for i in range(self.num_sensors):
             if not self.sensor_battery[i]:
                 dst = self.sensor_x[i] ** 2 + (self.sensor_y[i] - 2.5) ** 2
@@ -706,7 +706,7 @@ class Root(Tk):
                      row=5)
 
         plt.plot(self.time, self.reference_light, 'r', label='Reference', linewidth=2, linestyle=':')
-        plt.plot(self.time, self.room_light, 'b', label='Room', linewidth=0.5)
+        plt.plot(self.time, self.room_light, 'k', label='Room', linewidth=0.5)
         plt.xlim(self.time[0], self.time[-1])
         plt.xlabel('Time [hr]')
         plt.ylabel('Illuminance [lux]')
@@ -743,11 +743,11 @@ class Root(Tk):
     def update_plot(self):
         plt.cla()
         if self.plot_outside.get():
-            plt.plot(self.time, self.outside_light, 'k', label='Outside', linestyle='--')
+            plt.plot(self.time, self.outside_light, 'b', label='Outside', linestyle='--')
         if self.plot_ref.get():
             plt.plot(self.time, self.reference_light, 'r', label='Reference', linewidth=2, linestyle=':')
         if self.plot_room.get():
-            plt.plot(self.time, self.room_light, 'b', label='Room', linewidth=0.5)
+            plt.plot(self.time, self.room_light, 'k', label='Room', linewidth=0.5)
         if self.plot_measured.get():
             plt.plot(self.time, self.m_light, 'g', label='Measured', linewidth=0.75, linestyle='-.')
         plt.xlim(self.time[0], self.time[-1])
